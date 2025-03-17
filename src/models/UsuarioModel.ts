@@ -50,4 +50,11 @@ export class UsuarioModel {
       [dataAtual,usuario.id_usuario]
     );
   }
+  static async resetPass(usuario: Usuario): Promise<void>{
+    await pool.execute(
+        'update usuarios set pass_usuario = ? WHERE id_usuario = ?',
+      [usuario.pass_usuario,usuario.id_usuario]
+    );
+
+  }
 }

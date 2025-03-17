@@ -92,10 +92,17 @@ export class TokenController {
             if (!token) {
                 return res.status(404).json({ message: "Token não encontrado" });
             }
-    
+
+            const usuario= await UsuarioService.buscarPorId(id_user)
+            if(!usuario){
+                return res.status(404).json({ message: "Usuario Não encontrado" });
+            }
+
+            const verificado = await UsuarioService.verificar(usuario);
             await TokenService.atualizar(token);
+
             
-            res.status(200).json({ message: "Token atualizado com sucesso",token });
+            res.status(200).json({ message: "Usuário Verificado com Sucesso",verificado });
         } catch (error) {
 
             console.log(error)

@@ -30,14 +30,15 @@ router.post('/buscar', async (req, res) => {
   }
 });
 
-
-
-router.get('/verificar/:email_usuario', async (req, res) => {
+router.post('/resetPass', async (req, res) => {
   try {
-    await usuarioController.verificar(req, res);
+    await usuarioController.resetPass(req, res);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao buscar usuário', error });
+    res.status(500).json({ message: 'Erro ao resetar senha', error });
   }
 });
+
+
+
 
 export default router;

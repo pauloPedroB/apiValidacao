@@ -53,4 +53,10 @@ export class UsuarioService {
     return dataAtual
   }
 
+  static async resetPass(usuario: Usuario): Promise<void> {
+    const hashedPassword = await bcrypt.hash(usuario.pass_usuario, 10);
+    usuario.pass_usuario = hashedPassword
+    await UsuarioModel.resetPass(usuario);
+  }
+
 }
