@@ -12,13 +12,7 @@ router.get('/validar/:id_token/:id_user', async (req, res) => {
     res.status(500).json({ message: 'Erro ao validar Token', error });
   }
 });
-router.get('/buscar/:id_token', async (req, res) => {
-  try {
-    await tokenController.buscar(req, res);
-  } catch (error) {
-    res.status(500).json({ message: 'Erro ao validar Token', error });
-  }
-});
+
 router.post('/criar', async (req, res) => {
   try {
     await tokenController.criar(req, res);

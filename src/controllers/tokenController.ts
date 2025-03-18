@@ -41,33 +41,6 @@ export class TokenController {
         }
     }
 
-    async buscar(req, res) {
-        const { id_token, } = req.params;
-        try {
-            const schema = Joi.object({
-                id_token: Joi.string().max(64).required().messages({
-                    "string.max": "O token deve ter no máximo 64 caracteres!",
-                    "any.required": "O id do Token é obrigatório!"
-                }),
-                });
-            
-            const { error, value } = schema.validate(req.params, { abortEarly: false });
-        
-            if (error) {
-                return res.status(400).json({ message: error.details.map((err) => err.message) });
-            }
-            const token = await TokenService.buscar(id_token);
-            if (!token) {
-                return res.status(404).json({ message: "Token não encontrado" });
-            }
-            res.status(200).json({ message: "Token Encontrado com sucesso",token });
-        } catch (error) {
-
-            console.log(error)
-            res.status(500).json({ message: (error as Error).message });
-        }
-    }
- 
     async atualizar(req, res) {
         const { id_token,id_user } = req.params;
         try {
