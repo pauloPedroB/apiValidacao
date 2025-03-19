@@ -15,7 +15,13 @@ export class UsuarioService {
     return usuario
   }
   static async buscarPorId(id: number): Promise<Usuario | null> {
-    return await UsuarioModel.buscarPorId(id);
+    const usuario = UsuarioModel.buscarPorId(id);
+
+    if (!usuario){
+      throw new Error("Usuário não encontrado");
+    }
+    return usuario
+
   }
   static async login(email: string, pass_usuario: string): Promise<Usuario | null> {
     const usuario = await UsuarioModel.buscarPorEmail(email);

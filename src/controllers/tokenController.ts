@@ -46,9 +46,9 @@ export class TokenController {
         try {
             const schema = Joi.object({
                 id_user: Joi.number().integer().required().messages({
-                    "number.base": "A id do Usuário deve ser um número!",
-                    "number.integer": "O id do usuário deve ser um número inteiro!",
-                    "any.required": "O id do Usuário é obrigatório!"
+                    "any.required": "Entre no sistema para conseguirmos validar seu usuário!",
+                    "number.base": "Entre no sistema para conseguirmos validar seu usuário!",
+                    "number.integer": "O id do usuário deve ser um número inteiro!"
                 }),
                 id_token: Joi.string().max(64).required().messages({
                     "string.max": "O token deve ter no máximo 64 caracteres!",

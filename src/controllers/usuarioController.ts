@@ -125,6 +125,36 @@ export class UsuarioController {
       res.status(500).json({ message: (error as Error).message });
     }
   }
+  async buscarPorId(req, res) {
+    const { id_user, } = req.body;
+    try {
+      const schema = Joi.object({
+        id_user: Joi.number().integer().required().messages({
+          "any.required": "Entre no sistema para conseguirmos validar seu usuário!",
+          "number.base": "Entre no sistema para conseguirmos validar seu usuário!",
+          "number.integer": "O id do usuário deve ser um número inteiro!"
+      }),
+
+      });
+
+      const { error, value } = schema.validate(req.body, { abortEarly: false });
+
+      if (error) {
+        return res.status(400).json({ message: error.details.map((err) => err.message) });
+      }
+
+      const usuario = await UsuarioService.buscarPorId(id_user);
+      if (!usuario) {
+        return res.status(400).json({ message: 'Usuário não encontrado' });
+      }
+
+      res.status(200).json({ message: 'Usuário encontrado', usuario });
+
+    } catch (error) {
+      res.status(500).json({ message: (error as Error).message });
+    }
+  }
+
   async resetPass(req, res) {
     try {
       const { pass_usuario, confirm_pass, id_token } = req.body;

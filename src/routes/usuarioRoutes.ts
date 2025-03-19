@@ -30,6 +30,14 @@ router.post('/buscar', async (req, res) => {
   }
 });
 
+router.post('/id', async (req, res) => {
+  try {
+    await usuarioController.buscarPorId(req, res);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao encontrar usuário', error });
+  }
+});
+
 router.post('/resetPass', async (req, res) => {
   try {
     await usuarioController.resetPass(req, res);
