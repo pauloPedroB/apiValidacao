@@ -208,6 +208,43 @@ export class UsuarioController {
       res.status(500).json({ message: (error as Error).message });
     }
   }
+  async atualizarTipo(req, res) {
+    try {
+      const { typeUser, id_user } = req.body;
+
+      const schema = Joi.object({
+          id_user: Joi.number().integer().required().messages({
+            "any.required": "Entre no sistema para conseguirmos validar seu usuário!",
+            "number.base": "Entre no sistema para conseguirmos validar seu usuário!",
+            "number.integer": "O id do usuário deve ser um número inteiro!"
+        }),
+          typeUser: Joi.number().integer().required().messages({
+            "any.required": "Entre no sistema para conseguirmos validar seu usuário!",
+            "number.base": "Entre no sistema para conseguirmos validar seu usuário!",
+            "number.integer": "O id do usuário deve ser um número inteiro!"
+        }),
+      });
+
+      const { error, value } = schema.validate(req.body, { abortEarly: false });
+
+      if (error) {
+        return res.status(400).json({ message: error.details.map((err) => err.message) });
+      }
+      
+      const usuario = await UsuarioService.buscarPorId(id_user);
+
+      if (!usuario || !usuario.id_usuario) {
+        return res.status(404).json({ message: 'Usuário não encontrado!' });
+      }
+      usuario.typeUser = typeUser;
+      await UsuarioService.atualizarTipo(usuario);
+
+
+      res.status(201).json({ message: 'Tipo de usuário alterado com Sucesso' });
+    } catch (error) {
+      res.status(500).json({ message: (error as Error).message });
+    }
+  }
 
 
 }

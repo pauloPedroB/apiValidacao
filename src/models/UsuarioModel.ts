@@ -57,4 +57,12 @@ export class UsuarioModel {
     );
 
   }
+
+  static async atualizarTipo(usuario: Usuario): Promise<void>{
+    await pool.execute(
+        'update usuarios set typeUser = ? WHERE id_usuario = ?',
+      [usuario.typeUser,usuario.id_usuario]
+    );
+
+  }
 }

@@ -46,6 +46,14 @@ router.post('/resetPass', async (req, res) => {
   }
 });
 
+router.post('/Atualizar/Tipo', async (req, res) => {
+  try {
+    await usuarioController.atualizarTipo(req, res);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao alterar tipo de usuário', error });
+  }
+});
+
 
 
 

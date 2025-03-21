@@ -64,5 +64,8 @@ export class UsuarioService {
     usuario.pass_usuario = hashedPassword
     await UsuarioModel.resetPass(usuario);
   }
+  static async atualizarTipo(usuario: Usuario): Promise<void> {
+    await UsuarioModel.atualizarTipo(usuario);
+  }
 
 }
