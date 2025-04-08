@@ -6,11 +6,21 @@ import bcrypt from 'bcryptjs';
 
 export class UsuarioModel {
   // Buscar um usuário por email
-  static async buscarPorEmail(email: string): Promise<Usuario | null> {
-    const [rows] = await pool.execute(
-      'SELECT * FROM usuarios WHERE email_usuario = ?',
-      [email]
-    );
+  static async buscar(filtro: { id_usuario?: number; email_usuario?: string }): Promise<Usuario | null> {
+    let query = 'SELECT * FROM usuarios WHERE ';
+    const params: any[] = [];
+  
+    if (filtro.id_usuario !== undefined) {
+      query += 'id_usuario = ?';
+      params.push(filtro.id_usuario);
+    } else if (filtro.email_usuario !== undefined) {
+      query += 'email_usuario = ?';
+      params.push(filtro.email_usuario);
+    } else {
+      // Nenhum filtro válido foi passado
+      return null;
+    }
+    const [rows] = await pool.execute(query, params);
 
     // Garantindo que "rows" seja do tipo RowDataPacket[]
     if (Array.isArray(rows) && rows.length > 0) {
@@ -20,20 +30,7 @@ export class UsuarioModel {
 
     return null;
   }
-  static async buscarPorId(id_usuario: number): Promise<Usuario | null> {
-    const [rows] = await pool.execute(
-      'SELECT * FROM usuarios WHERE id_usuario = ?',
-      [id_usuario]
-    );
 
-    // Garantindo que "rows" seja do tipo RowDataPacket[]
-    if (Array.isArray(rows) && rows.length > 0) {
-      const user = rows[0] as RowDataPacket; // Cast para RowDataPacket
-      return new Usuario(user.id_usuario, user.email_usuario, user.pass_usuario, user.typeUser, user.verificado);
-    }
-
-    return null;
-  }
 
   // Criar um novo usuário no banco
   static async salvar(usuario: Usuario): Promise<void> {

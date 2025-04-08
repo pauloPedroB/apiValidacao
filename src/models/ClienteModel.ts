@@ -6,21 +6,31 @@ import { UsuarioService } from '../services/usuarioService';
 
 export class ClienteModel {
   // Buscar um usuário por email
-  static async buscarPorId(id_cliente: number): Promise<Cliente | null> {
-    const [rows] = await pool.execute(
-      'SELECT * FROM clientes WHERE id_cliente = ?',
-      [id_cliente]
-    );
-
-    // Garantindo que "rows" seja do tipo RowDataPacket[]
+  static async buscarCliente(filtro: { id_usuario?: number; cpf?: string }): Promise<Cliente | null> {
+    let query = 'SELECT * FROM clientes WHERE ';
+    const params: any[] = [];
+  
+    if (filtro.id_usuario !== undefined) {
+      query += 'id_usuario = ?';
+      params.push(filtro.id_usuario);
+    } else if (filtro.cpf !== undefined) {
+      query += 'cpf = ?';
+      params.push(filtro.cpf);
+    } else {
+      // Nenhum filtro válido foi passado
+      return null;
+    }
+  
+    const [rows] = await pool.execute(query, params);
+  
     if (Array.isArray(rows) && rows.length > 0) {
-      const cliente = rows[0] as RowDataPacket; // Cast para RowDataPacket
-      const usuario = await UsuarioService.buscarPorId(cliente.id_usuario)
-      
-      if(!usuario){
-        return null
+      const cliente = rows[0] as RowDataPacket;
+      const usuario = await UsuarioService.buscar({id_usuario: cliente.id_usuario});
+  
+      if (!usuario) {
+        return null;
       }
-    
+  
       return new Cliente(
         cliente.id_cliente,
         cliente.cpf,
@@ -30,9 +40,9 @@ export class ClienteModel {
         cliente.genero,
         cliente.carro,
         usuario
-    );
+      );
     }
-
+  
     return null;
   }
   

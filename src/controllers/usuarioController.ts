@@ -40,7 +40,8 @@ export class UsuarioController {
       }
 
       // Verifica se o email já está cadastrado
-      const usuario = await UsuarioService.buscarPorEmail(email_usuario);
+      const usuario = await UsuarioService.buscar({email_usuario: email_usuario});
+
 
       if (usuario) {
         return res.status(404).json({ message: 'Email já cadastrado!' });
@@ -54,7 +55,7 @@ export class UsuarioController {
         typeUser
       });
 
-      const novo_usuario = await UsuarioService.buscarPorEmail(email_usuario);
+      const novo_usuario = await UsuarioService.buscar({email_usuario: email_usuario});
 
       res.status(201).json({ message: 'Usuário criado com sucesso', novo_usuario });
     } catch (error) {
@@ -114,7 +115,7 @@ export class UsuarioController {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
 
-      const usuario = await UsuarioService.buscarPorEmail(email_usuario);
+      const usuario = await UsuarioService.buscar({email_usuario: email_usuario});
       if (!usuario) {
         return res.status(400).json({ message: 'Usuário não encontrado' });
       }
@@ -143,7 +144,7 @@ export class UsuarioController {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
 
-      const usuario = await UsuarioService.buscarPorId(id_user);
+      const usuario = await UsuarioService.buscar({id_usuario: id_user});
       if (!usuario) {
         return res.status(400).json({ message: 'Usuário não encontrado' });
       }
@@ -190,7 +191,7 @@ export class UsuarioController {
         return res.status(404).json({ message: "Token não encontrado" });
       }
 
-      const usuario = await UsuarioService.buscarPorId(token.id_user.id_usuario);
+      const usuario = await UsuarioService.buscar({id_usuario: token.id_user.id_usuario});
 
       if (!usuario || !usuario.id_usuario) {
         return res.status(404).json({ message: 'Usuário não encontrado!' });
@@ -231,7 +232,7 @@ export class UsuarioController {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
       
-      const usuario = await UsuarioService.buscarPorId(id_user);
+      const usuario = await UsuarioService.buscar({id_usuario: id_user});
 
       if (!usuario || !usuario.id_usuario) {
         return res.status(404).json({ message: 'Usuário não encontrado!' });

@@ -15,7 +15,7 @@ export class TokenModel {
     // Garantindo que "rows" seja do tipo RowDataPacket[]
     if (Array.isArray(rows) && rows.length > 0) {
       const token = rows[0] as RowDataPacket; // Cast para RowDataPacket
-      const usuario = await UsuarioService.buscarPorId(token.id_user);
+      const usuario = await UsuarioService.buscar({id_usuario: token.id_user});
       if (!usuario) {
         return null;
       }

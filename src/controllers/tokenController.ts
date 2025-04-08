@@ -27,7 +27,7 @@ export class TokenController {
               if (error) {
                 return res.status(400).json({ message: error.details.map((err) => err.message) });
               }
-            const usuario = await UsuarioService.buscarPorId(id_user);
+            const usuario = await UsuarioService.buscar({id_usuario: id_user});
             if(!usuario){
                 return res.status(404).json({ message: "Usuario Não encontrado" });
             }
@@ -66,7 +66,7 @@ export class TokenController {
                 return res.status(404).json({ message: "Token não encontrado" });
             }
 
-            const usuario= await UsuarioService.buscarPorId(id_user)
+            const usuario = await UsuarioService.buscar({id_usuario: id_user});
             if(!usuario){
                 return res.status(404).json({ message: "Usuario Não encontrado" });
             }

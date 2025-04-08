@@ -5,26 +5,26 @@ import bcrypt from 'bcryptjs';
 
 export class UsuarioService {
   // Buscar um usuário por email
-  static async buscarPorEmail(email: string): Promise<Usuario | null> {
-    const usuario = UsuarioModel.buscarPorEmail(email);
+  static async buscar(filtro: { id_usuario?: number; email_usuario?: string }): Promise<Usuario | null> {
+      let usuario: Usuario | null =  null;
+      if (filtro.id_usuario !== undefined) {
+          usuario = await UsuarioModel.buscar({id_usuario: filtro.id_usuario});
+      }
+      else if (filtro.email_usuario !== undefined) {
+          usuario = await UsuarioModel.buscar({email_usuario: filtro.email_usuario});
+      }
+      else{
+        throw new Error("Nenhum parâmetro enviado");
 
-    if (!usuario){
-      throw new Error("Usuário não encontrado"); 
-    }
+      }
+      if (!usuario){
+        return null
+      }
 
     return usuario
-  }
-  static async buscarPorId(id: number): Promise<Usuario | null> {
-    const usuario = UsuarioModel.buscarPorId(id);
-
-    if (!usuario){
-      throw new Error("Usuário não encontrado");
-    }
-    return usuario
-
   }
   static async login(email: string, pass_usuario: string): Promise<Usuario | null> {
-    const usuario = await UsuarioModel.buscarPorEmail(email);
+    const usuario = await UsuarioModel.buscar({email_usuario: email});
 
     if (!usuario) {
         throw new Error("Usuário não encontrado"); 
