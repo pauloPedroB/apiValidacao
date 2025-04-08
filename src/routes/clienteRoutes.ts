@@ -12,5 +12,11 @@ router.post('/id_user', async (req, res) => {
       res.status(500).json({ message: 'Erro ao encontrar cliente', error });
     }
   });
-
+  router.post('/criar', async (req, res) => {
+    try {
+      await clienteController.criar(req, res);
+    } catch (error) {
+      res.status(500).json({ message: 'Erro ao criar Cliente', error });
+    }
+  });
 export default router;

@@ -13,6 +13,8 @@ export class TokenController {
         const {id_user} = req.body;
 
         try {
+            
+
             const schema = Joi.object({
                 id_user: Joi.number().integer().required().messages({
                   "number.base": "A idade deve ser um número!",

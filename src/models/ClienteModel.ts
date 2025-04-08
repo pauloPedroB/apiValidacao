@@ -6,7 +6,7 @@ import { UsuarioService } from '../services/usuarioService';
 
 export class ClienteModel {
   // Buscar um usuário por email
-  static async buscarCliente(filtro: { id_usuario?: number; cpf?: string }): Promise<Cliente | null> {
+  static async buscarCliente(filtro: { id_usuario?: number; cpf?: string; id_cliente?: number; }): Promise<Cliente | null> {
     let query = 'SELECT * FROM clientes WHERE ';
     const params: any[] = [];
   
@@ -16,7 +16,10 @@ export class ClienteModel {
     } else if (filtro.cpf !== undefined) {
       query += 'cpf = ?';
       params.push(filtro.cpf);
-    } else {
+    } else if (filtro.id_cliente !== undefined) {
+      query += 'id_cliente = ?';
+      params.push(filtro.id_cliente);
+    }else {
       // Nenhum filtro válido foi passado
       return null;
     }
@@ -32,18 +35,24 @@ export class ClienteModel {
       }
   
       return new Cliente(
-        cliente.id_cliente,
         cliente.cpf,
         cliente.nome,
         cliente.telefone,
         cliente.dtNascimento,
         cliente.genero,
         cliente.carro,
-        usuario
+        usuario,
+        cliente.id_cliente,
       );
     }
   
     return null;
   }
-  
+  static async criar(cliente: Cliente): Promise<void> {
+
+    await pool.execute(
+      'INSERT INTO clientes (cpf, nome, telefone,dtNascimento,genero,carro,id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [cliente.cpf, cliente.nome, cliente.telefone, cliente.dtNascimento, cliente.genero, cliente.carro, cliente.usuario.id_usuario]
+    );
+  }
 }
