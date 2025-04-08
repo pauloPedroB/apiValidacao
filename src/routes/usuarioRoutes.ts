@@ -24,15 +24,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/buscar', async (req, res) => {
   try {
-    await usuarioController.buscarPorEmail(req, res);
-  } catch (error) {
-    res.status(500).json({ message: 'Erro ao encontrar usuário', error });
-  }
-});
-
-router.post('/id', async (req, res) => {
-  try {
-    await usuarioController.buscarPorId(req, res);
+    await usuarioController.buscar(req, res);
   } catch (error) {
     res.status(500).json({ message: 'Erro ao encontrar usuário', error });
   }

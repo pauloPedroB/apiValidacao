@@ -66,7 +66,6 @@ export class UsuarioController {
   async login(req, res) {
     const { email_usuario, pass_usuario } = req.body;
 
-
     const schema = Joi.object({
       email_usuario: Joi.string().email().max(120).required().messages({
         "string.email": "O email deve ser válido!",
@@ -97,45 +96,19 @@ export class UsuarioController {
     }
   }
 
-  async buscarPorEmail(req, res) {
-    const { email_usuario, } = req.body;
+  async buscar(req, res) {
     try {
       const schema = Joi.object({
-        email_usuario: Joi.string().email().max(120).required().messages({
+        email_usuario: Joi.string().email().max(120).messages({
           "string.email": "O email deve ser válido!",
           "string.max": "O email deve ter no máximo 120 caracteres!",
-          "any.required": "O campo email é obrigatório!"
         }),
-
-      });
-
-      const { error, value } = schema.validate(req.body, { abortEarly: false });
-
-      if (error) {
-        return res.status(400).json({ message: error.details.map((err) => err.message) });
-      }
-
-      const usuario = await UsuarioService.buscar({email_usuario: email_usuario});
-      if (!usuario) {
-        return res.status(400).json({ message: 'Usuário não encontrado' });
-      }
-
-      res.status(200).json({ message: 'Usuário encontrado', usuario });
-
-    } catch (error) {
-      res.status(500).json({ message: (error as Error).message });
-    }
-  }
-  async buscarPorId(req, res) {
-    const { id_user, } = req.body;
-    try {
-      const schema = Joi.object({
-        id_user: Joi.number().integer().required().messages({
-          "any.required": "Entre no sistema para conseguirmos validar seu usuário!",
+        id_user: Joi.number().integer().messages({
           "number.base": "Entre no sistema para conseguirmos validar seu usuário!",
           "number.integer": "O id do usuário deve ser um número inteiro!"
-      }),
-
+          }),
+      }).or('id_user','email_usuario' ).messages({
+        'object.missing': 'É necessário informar o id_usuario ou o email'
       });
 
       const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -144,7 +117,7 @@ export class UsuarioController {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
 
-      const usuario = await UsuarioService.buscar({id_usuario: id_user});
+      const usuario = await UsuarioService.buscar({id_usuario: value.id_user,email_usuario: value.email_usuario});
       if (!usuario) {
         return res.status(400).json({ message: 'Usuário não encontrado' });
       }
@@ -155,7 +128,7 @@ export class UsuarioController {
       res.status(500).json({ message: (error as Error).message });
     }
   }
-
+  
   async resetPass(req, res) {
     try {
       const { pass_usuario, confirm_pass, id_token } = req.body;
