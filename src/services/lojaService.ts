@@ -6,7 +6,7 @@ import { LojaModel } from '../models/LojaModel';
 
 
 
-export class ClienteService {
+export class LojaService {
     static async buscarLoja(filtro: { id?: number; cnpj?: string; id_loja?: number; }): Promise<Loja | null> {
       let loja: Loja | null =  null;
       if (filtro.id !== undefined) {
@@ -28,18 +28,18 @@ export class ClienteService {
       }
       return loja
     }
-    static async criar(cliente: { cnpj: String; nomeFantasia: String; razaoSocial: String; telefone: String; celular: String; abertura: Date; usuario: Usuario; }): Promise<void> {
+    static async criar(loja: { cnpj: String; nomeFantasia: String; razaoSocial: String; telefone: String; celular: String; abertura: Date; usuario: Usuario; }): Promise<void> {
   
-    //const loja = new Loja(
-      //  loja.cnpj,
-        //loja.nomeFantasia,
-       // loja.razaoSocial,
-        //loja.telefone,
-        //loja.celular,
-        //loja.abertura,
-        //usuario,
-        //);
+    const nova_loja = new Loja(
+        loja.cnpj,
+        loja.nomeFantasia,
+        loja.razaoSocial,
+        loja.telefone,
+        loja.celular,
+        loja.abertura,
+        loja.usuario,
+        );
 
-      //await ClienteModel.criar(novo_cliente);
+      await LojaModel.criar(nova_loja);
     }
 }
