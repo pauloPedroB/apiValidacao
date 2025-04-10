@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import usuarioRoutes from './routes/usuarioRoutes';
 import tokenRoutes from './routes/tokenRoutes';
 import clienteRoutes from './routes/clienteRoutes';
+import lojaRoutes from './routes/lojaRoutes';
 
 
 
@@ -15,6 +16,8 @@ app.use(express.json());
 app.use('/usuarios', usuarioRoutes);
 app.use('/tokens', tokenRoutes);
 app.use('/clientes', clienteRoutes);
+app.use('/lojas', lojaRoutes);
+
 
 
 const PORT = process.env.PORT || 3001;

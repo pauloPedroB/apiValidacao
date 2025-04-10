@@ -7,7 +7,7 @@ import { UsuarioService } from '../services/usuarioService';
 export class LojaModel {
   // Buscar um usuário por email
   static async buscarLoja(filtro: { id_usuario?: number; cnpj?: string; id_loja?: number; }): Promise<Loja | null> {
-    let query = 'SELECT * FROM clientes WHERE ';
+    let query = 'SELECT * FROM lojas WHERE ';
     const params: any[] = [];
   
     if (filtro.id_usuario !== undefined) {
@@ -52,7 +52,7 @@ export class LojaModel {
   static async criar(loja: Loja): Promise<void> {
 
     await pool.execute(
-      'INSERT INTO clientes (cnpj, nomeFantasia, razaoSocial,telefone,celular,abertura,id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO lojas (cnpj, nomeFantasia, razaoSocial,telefone,celular,abertura,id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [loja.cnpj, loja.nomeFantasia, loja.razaoSocial, loja.telefone, loja.celular, loja.abertura, loja.usuario.id_usuario]
     );
   }

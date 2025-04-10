@@ -7,7 +7,7 @@ import { cnpj as cnpjValidator } from 'cpf-cnpj-validator';
 
 import Joi from "joi";
 
-export class ClienteController {
+export class LojaController {
   async buscar(req, res) {
     try {
       const schema = Joi.object({
@@ -49,7 +49,6 @@ export class ClienteController {
   }
   async criar(req, res) {
     try {
-
       const { cnpj, nomeFantasia, razaoSocial, telefone,celular,abertura,id_usuario} = req.body;
 
       const schema = Joi.object({
@@ -65,25 +64,16 @@ export class ClienteController {
             "string.max": "O Razão Social deve ter no máximo 65 caracteres!",
             "any.required": "O campo Razão Social é obrigatório!"
         }),
-        dtNascimento: Joi.date().required().messages({
+        telefone: Joi.string().required().pattern(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/).message(
+          'Telefone inválido'
+        ),
+        celular: Joi.string().required().pattern(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/).message(
+          'Celular inválido'
+        ),
+        abertura: Joi.date().required().messages({
           'date.base': 'Data de nascimento inválida',
           'date.less': 'O cliente deve ter mais de 18 anos',
           'any.required': 'Data de nascimento é obrigatória'
-        }),
-        telefone: Joi.string().min(8).max(25).required().messages({
-          "string.min": "A confirmação de senha deve ter pelo menos 8 caracteres!",
-          "string.max": "A confirmação de senha deve ter no máximo 25 caracteres!",
-          "any.required": "O campo confirmação de senha é obrigatório!"
-        }),
-        genero: Joi.number().integer().messages({
-          "number.base": "O campo genero deve ser um número",
-          "number.integer": "O campo genero deve ser um número inteiro!",
-          "any.required": "O campo genero é obrigatório!"
-        }),
-        carro: Joi.number().integer().messages({
-          "number.base": "O campo carro deve ser um número",
-          "number.integer": "O campo carro deve ser um número inteiro!",
-          "any.required": "O campo carro é obrigatório!"
         }),
         id_usuario: Joi.number().integer().messages({
           "number.base": "Id do Usuário deve ser um número",
@@ -96,31 +86,37 @@ export class ClienteController {
       if (error) {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
-      if (!cnpjValidator.isValid(cpf)) {
-        return res.status(400).json({ message: 'CPF INVÁLIDO' });
+      if (!cnpjValidator.isValid(value.cnpj)) {
+        return res.status(400).json({ message: 'CNPJ INVÁLIDO' });
       }
-      const cliente = await ClienteService.buscarCliente({cpf: cpf,});
+      const loja = await LojaService.buscarLoja({cnpj: value.cnpj,});
 
-      if (cliente) {
-        return res.status(404).json({ message: 'Já existe um cliente cadastrado com esse CPF' });
+      if (loja) {
+        return res.status(404).json({ message: 'Já existe uma Loja cadastrado com esse CNPJ' });
       }
 
-      const usuario = await UsuarioService.buscar({id_usuario: id_usuario});
+      const usuario = await UsuarioService.buscar({id_usuario: value.id_usuario});
 
       if (!usuario) {
         return res.status(404).json({ message: 'Usuário não encontrado!' });
       }
-      usuario.typeUser = 3;
+      usuario.typeUser = 2;
       
       await UsuarioService.atualizarTipo(usuario);
 
-      const result = await ClienteService.criar({
-        cpf, nome, dtNascimento, telefone,genero,carro,usuario
+      const result = await LojaService.criar({
+        cnpj,
+        nomeFantasia,
+        razaoSocial,
+        telefone,
+        celular,
+        abertura,
+        usuario, 
       });
       
-      const novo_cliente = await ClienteService.buscarCliente({cpf: cpf,});
+      const nova_loja = await LojaService.buscarLoja({cnpj: value.cnpj});
 
-      res.status(201).json({ message: 'Cliente criado com sucesso',novo_cliente });
+      res.status(201).json({ message: 'Loja criada com sucesso',nova_loja });
     } catch (error) {
       res.status(500).json({ message: (error as Error).message });
     }

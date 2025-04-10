@@ -67,11 +67,9 @@ export class ClienteController {
           'date.less': 'O cliente deve ter mais de 18 anos',
           'any.required': 'Data de nascimento é obrigatória'
         }),
-        telefone: Joi.string().min(8).max(25).required().messages({
-          "string.min": "A confirmação de senha deve ter pelo menos 8 caracteres!",
-          "string.max": "A confirmação de senha deve ter no máximo 25 caracteres!",
-          "any.required": "O campo confirmação de senha é obrigatório!"
-        }),
+        telefone: Joi.string().pattern(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/).message(
+          'Telefone inválido'
+        ),
         genero: Joi.number().integer().messages({
           "number.base": "O campo genero deve ser um número",
           "number.integer": "O campo genero deve ser um número inteiro!",
