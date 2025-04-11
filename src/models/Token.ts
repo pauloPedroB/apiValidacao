@@ -1,6 +1,5 @@
 import { Usuario } from "./Usuario";
 
-// src/models/Usuario.ts
 export class Token {
     id_token: string; 
     dt_cr: Date;

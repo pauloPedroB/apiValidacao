@@ -1,6 +1,5 @@
 import { Usuario } from "./Usuario";
 
-// src/models/Usuario.ts
 export class Cliente {
     id_cliente?: number; 
     cpf: String;

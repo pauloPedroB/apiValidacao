@@ -1,8 +1,6 @@
 import { Usuario } from "./Usuario";
 
-// src/models/Usuario.ts
 export class Loja {
-    __tablename__ = 'lojas'
     
     id_loja?: number; 
     cnpj: String;
