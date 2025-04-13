@@ -9,10 +9,10 @@ import enderecoRoutes from './routes/enderecoRoutes';
 
 
 
-
 dotenv.config();
 
 const app = express();
+
 
 app.use(express.json());
 app.use('/usuarios', usuarioRoutes);

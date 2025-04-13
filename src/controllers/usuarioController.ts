@@ -3,6 +3,8 @@ import { Request, Response } from 'express';
 import { UsuarioService } from '../services/usuarioService';
 import Joi from "joi";
 import { TokenService } from '../services/tokenService';
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = process.env.SECRET_KEY;
 
 
 
@@ -88,16 +90,25 @@ export class UsuarioController {
 
     try {
       const usuario = await UsuarioService.login(email_usuario, pass_usuario);
+      
+      const token = jwt.sign(
+        { usuario }, // payload
+        SECRET_KEY,
+        { expiresIn: '1h' } // expiração
+      );
+  
 
-      res.status(200).json({ message: 'Login bem-sucedido', usuario });
+      res.status(200).json({ message: 'Login bem-sucedido',token });
 
     } catch (error) {
+      console.log(error)
       res.status(500).json({ message: (error as Error).message });
     }
   }
 
   async buscar(req, res) {
     try {
+    
       const schema = Joi.object({
         email_usuario: Joi.string().email().max(120).messages({
           "string.email": "O email deve ser válido!",
