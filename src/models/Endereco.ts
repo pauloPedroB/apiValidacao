@@ -39,6 +39,8 @@ export class Endereco {
       this.latitude = latitude;
       this.longitude = longitude;
       this.usuario = usuario;
+      this.id = id;
+      this.complemento = complemento; 
 
     }
     

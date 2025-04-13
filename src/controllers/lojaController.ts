@@ -100,6 +100,9 @@ export class LojaController {
       if (!usuario) {
         return res.status(404).json({ message: 'Usuário não encontrado!' });
       }
+      if(usuario.typeUser != null){
+        return res.status(404).json({ message: 'Este usuário já está vinculado a uma Loja, Cliente ou Administrador' });
+      }
       usuario.typeUser = 2;
       
       await UsuarioService.atualizarTipo(usuario);
