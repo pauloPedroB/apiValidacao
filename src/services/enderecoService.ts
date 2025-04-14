@@ -15,13 +15,10 @@ const options = {
 
 
 export class EnderecoService {
-    static async buscarEndereco(filtro: { id_usuario?: number; cep?: string; id_endereco?: number; }): Promise<Endereco | null> {
+    static async buscarEndereco(filtro: { id_usuario?: number; id_endereco?: number; }): Promise<Endereco | null> {
       let endereco: Endereco | null =  null;
       if (filtro.id_usuario !== undefined) {
             endereco = await EnderecoModel.buscarEndereco({id_usuario: filtro.id_usuario});
-      }
-      else if (filtro.cep !== undefined) {
-            endereco = await EnderecoModel.buscarEndereco({ cep: filtro.cep });
       }
       else if (filtro.id_endereco !== undefined) {
             endereco = await EnderecoModel.buscarEndereco({ id_endereco: filtro.id_endereco });

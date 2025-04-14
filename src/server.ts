@@ -6,6 +6,8 @@ import tokenRoutes from './routes/tokenRoutes';
 import clienteRoutes from './routes/clienteRoutes';
 import lojaRoutes from './routes/lojaRoutes';
 import enderecoRoutes from './routes/enderecoRoutes';
+import produtoRoutes from './routes/produtoRoutes';
+
 
 
 
@@ -20,6 +22,8 @@ app.use('/tokens', tokenRoutes);
 app.use('/clientes', clienteRoutes);
 app.use('/lojas', lojaRoutes);
 app.use('/enderecos', enderecoRoutes);
+app.use('/produtos', produtoRoutes);
+
 
 
 

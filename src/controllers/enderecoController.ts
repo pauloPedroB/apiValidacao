@@ -18,10 +18,7 @@ export class EnderecoController {
           "number.base": "Id do Endereço deve ser um número",
           "number.integer": "O id do Endereço deve ser um número inteiro!"
         }),
-        cep: Joi.string().pattern(/^\d{8}$/).messages({
-          "string.pattern.base": "CEP deve conter 14 dígitos numéricos"
-        })
-      }).or('id_usuario', 'cep','id_endereco').messages({
+      }).or('id_usuario','id_endereco').messages({
         'object.missing': 'É necessário informar o id_usuario ou o cnpj'
       });
 
@@ -32,7 +29,6 @@ export class EnderecoController {
       }
       const endereco = await EnderecoService.buscarEndereco({
         id_usuario: value.id_usuario,
-        cep: value.cep,
         id_endereco: value.id_endereco
       });
 
@@ -49,7 +45,7 @@ export class EnderecoController {
   async criar(req, res) {
     try {
       const schema = Joi.object({
-        cep: Joi.string().pattern(/^\d{8}$/).messages({
+        cep: Joi.string().pattern(/^\d{8}$/).required().messages({
           "string.pattern.base": "CEP deve conter 8 dígitos numéricos",
           "any.required": "O campo CEP é obrigatório!"
         }),

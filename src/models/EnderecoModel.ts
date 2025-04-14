@@ -13,9 +13,6 @@ export class EnderecoModel {
     if (filtro.id_usuario !== undefined) {
       query += 'id_usuario = ?';
       params.push(filtro.id_usuario);
-    } else if (filtro.cep !== undefined) {
-      query += 'cep = ?';
-      params.push(filtro.cep);
     } else if (filtro.id_endereco !== undefined) {
       query += 'id = ?';
       params.push(filtro.id_endereco);
