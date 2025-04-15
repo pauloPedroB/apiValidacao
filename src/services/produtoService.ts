@@ -4,13 +4,6 @@ import { Produto } from '../models/Produto';
 import { ProdutoModel } from '../models/ProdutoModel';
 
 
-const options = {
-    provider: 'openstreetmap', // usa o Nominatim por padrão
-    httpAdapter: 'https',
-    formatter: null
-  };
-
-
 
 export class ProdutoService {
     static async buscarProduto(id_produto: number): Promise<Produto | null> {

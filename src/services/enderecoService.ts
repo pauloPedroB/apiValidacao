@@ -69,6 +69,33 @@ export class EnderecoService {
 
         await EnderecoModel.editar(novo_endereco);
     }
+    
+    static async contarDistancia(endereco1: Endereco, endereco2: Endereco): Promise<number>{
+        function toRadians(degrees) {
+            return degrees * (Math.PI / 180);
+        }
+        const R = 6371; // Raio da Terra em quilômetros
+
+        const lat1 = Number(endereco1.latitude);
+        const lon1 = Number(endereco1.longitude);
+
+        const lat2 = Number(endereco2.latitude);
+        const lon2 = Number(endereco2.longitude);
+
+
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        const distancia = R * c;
+        console.log(distancia)
+        return distancia; // Retorna a distância em quilômetros
+    }
 
     static async BuscarCEP(cep: string, numero: number): Promise<[boolean,any]>{
         if (cep.length !== 8) {
