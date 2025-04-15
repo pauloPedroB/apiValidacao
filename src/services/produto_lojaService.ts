@@ -36,6 +36,20 @@ export class Produto_LojaService {
           }
           return produtos_loja
         }
+    
+    static async listar(endereco_user?: Endereco|null,palavras?: string[], categoria?: string): Promise<Produto_Loja[]> {
+      let produto_loja: Produto_Loja[];
+      
+      if(endereco_user){
+        produto_loja = await Produto_LojaModel.listar(endereco_user,palavras,categoria);
+      }
+      else{
+        produto_loja = await Produto_LojaModel.listar(null,palavras,categoria);
+
+      }
+   
+      return produto_loja
+    }
     static async criar(produto_loja: { loja: Loja, produto: Produto}): Promise<void> {
   
         const novo_produto_loja = new Produto_Loja(

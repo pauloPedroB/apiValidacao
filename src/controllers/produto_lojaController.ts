@@ -57,6 +57,48 @@ export class Produto_LojaController {
       return res.status(500).json({ message: (error as Error).message });
     }
   }
+  async listar(req, res) {
+    try {
+      const schema = Joi.object({
+        nomes: Joi.array().items(Joi.string()),
+        categoria: Joi.string().allow(null, '').max(50).messages({
+            "string.max": "A categoria deve ter no máximo 50 caracteres!",
+        }),
+        id_usuario: Joi.number().integer().required().messages({
+          "number.base": "Id do Usuário deve ser um número",
+          "number.integer": "O id do Usuário deve ser um número inteiro!",
+          "any.required": "O id do Usuário é obrigatório!"
+        }),
+      });
+
+      const { error, value } = schema.validate(req.body, { abortEarly: false });
+
+      if (error) {
+        return res.status(400).json({ message: error.details.map((err) => err.message) });
+      }
+      const usuario = await UsuarioService.buscar({id_usuario: value.id_usuario})
+      if(usuario == null){
+        return res.status(404).json({ message: 'É necessário estar logado no sistema' });
+      }
+      const endereco = await EnderecoService.buscarEndereco({id_usuario: usuario.id_usuario});
+      if(endereco == null){
+        if(usuario.typeUser == 1){
+          const produto_loja = await Produto_LojaService.listar(null,value.nomes,value.categoria);
+  
+          return res.status(200).json({ message: 'Produto encontrado', produto_loja });
+        }
+        return res.status(404).json({ message: 'Endereço não encontrado' });
+      }
+      
+      
+      const produto_loja = await Produto_LojaService.listar(endereco,value.nomes,value.categoria);
+      
+      return res.status(200).json({ message: 'Produtos encontrados', produto_loja });
+
+    } catch (error) {
+      return res.status(500).json({ message: (error as Error).message });
+    }
+  }
   async listarProdutosLoja(req, res) {
     try {
       const schema = Joi.object({

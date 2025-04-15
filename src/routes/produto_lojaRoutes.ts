@@ -19,6 +19,13 @@ router.post('/buscar', async (req, res) => {
       res.status(500).json({ message: 'Erro ao encontrar Produto', error });
     }
   });
+  router.post('/listar', async (req, res) => {
+    try {
+      await produto_lojaController.listar(req, res);
+    } catch (error) {
+      res.status(500).json({ message: 'Erro ao encontrar Produto', error });
+    }
+  });
   router.post('/criar', async (req, res) => {
     try {
       await produto_lojaController.criar(req, res);

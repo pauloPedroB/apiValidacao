@@ -99,15 +99,20 @@ export class Produto_LojaModel {
     }
     return produtos_loja;
   }
-  static async listar( endereco_user: Endereco,palavras?: string[], categoria?: string): Promise<Produto_Loja[] | null> {
+  static async listar( endereco_user?: Endereco|null,palavras?: string[], categoria?: string): Promise<Produto_Loja[]> {
     const params: any[] = [];
-
-    let query = 'SELECT pl.*, l.*, p.*, e.*, ' +
+    let query = ""
+    if(endereco_user){
+      query += 'SELECT pl.*, l.*, p.*, e.*, ' +
       'ROUND(6371 * ACOS(' +
         'COS(RADIANS('+endereco_user.latitude+')) * COS(RADIANS(e.latitude)) * ' +
         'COS(RADIANS(e.longitude) - RADIANS('+endereco_user.longitude+')) + ' +
         'SIN(RADIANS('+endereco_user.latitude+')) * SIN(RADIANS(e.latitude))' +
       '), 2) AS distancia';
+    }
+    else{
+      query += 'SELECT pl.*, l.*, p.*, ';
+    }
   
     if (palavras && palavras.length > 0) {
       // expressão para calcular relevância
@@ -116,11 +121,18 @@ export class Produto_LojaModel {
     } else {
       query += ', 0 AS relevancia ';
     }
-  
-    query += 'FROM produto_loja pl ' +
-             'JOIN lojas l ON pl.id_loja = l.id_loja ' +
-             'JOIN produtos p ON pl.id_produto = p.id_produto ' +
-             'JOIN enderecos e ON e.id_usuario = l.id_usuario ';
+    
+    if(endereco_user){
+      query += 'FROM produto_loja pl ' +
+              'JOIN lojas l ON pl.id_loja = l.id_loja ' +
+              'JOIN produtos p ON pl.id_produto = p.id_produto ' +
+              'JOIN enderecos e ON e.id_usuario = l.id_usuario ';
+    }
+    else{
+      query += 'FROM produto_loja pl ' +
+              'JOIN lojas l ON pl.id_loja = l.id_loja ' +
+              'JOIN produtos p ON pl.id_produto = p.id_produto '
+    }
   
     const conditions: string[] = [];
   
@@ -148,7 +160,12 @@ export class Produto_LojaModel {
       query += ' WHERE ' + conditions.join(' AND ');
     }
   
-    query += ' ORDER BY relevancia DESC, distancia ASC';
+    if(endereco_user){
+      query += ' ORDER BY distancia ASC, relevancia DESC';
+    }
+    else{
+      query += ' ORDER BY relevancia DESC';
+    }
     query += ' LIMIT 40';
   
     const [rows] = await pool.execute(query,params);
