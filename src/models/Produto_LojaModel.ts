@@ -103,7 +103,7 @@ export class Produto_LojaModel {
     const params: any[] = [];
     let query = ""
     if(endereco_user){
-      query += 'SELECT pl.*, l.*, p.*, e.*, ' +
+      query += 'SELECT pl.*, l.*, p.*, e.*, u.*,' +
       'ROUND(6371 * ACOS(' +
         'COS(RADIANS('+endereco_user.latitude+')) * COS(RADIANS(e.latitude)) * ' +
         'COS(RADIANS(e.longitude) - RADIANS('+endereco_user.longitude+')) + ' +
@@ -111,7 +111,7 @@ export class Produto_LojaModel {
       '), 2) AS distancia';
     }
     else{
-      query += 'SELECT pl.*, l.*, p.*, ';
+      query += 'SELECT pl.*, l.*, p.*, u.* ';
     }
   
     if (palavras && palavras.length > 0) {
@@ -126,7 +126,8 @@ export class Produto_LojaModel {
       query += 'FROM produto_loja pl ' +
               'JOIN lojas l ON pl.id_loja = l.id_loja ' +
               'JOIN produtos p ON pl.id_produto = p.id_produto ' +
-              'JOIN enderecos e ON e.id_usuario = l.id_usuario ';
+              'JOIN enderecos e ON e.id_usuario = l.id_usuario '+
+              'JOIN usuarios u ON u.id_usuario = l.id_usuario ';
     }
     else{
       query += 'FROM produto_loja pl ' +
@@ -175,6 +176,7 @@ export class Produto_LojaModel {
     if (Array.isArray(rows)) {
        
         for (const row of rows as RowDataPacket[]) {
+          console.log(row.distancia)
             const usuario = new Usuario(row.id_usuario, row.email_usuario, row.pass_usuario, row.typeUser, row.verificado);
             const loja = new Loja(
               row.cnpj,
@@ -205,17 +207,24 @@ export class Produto_LojaModel {
               row.id,
               row.complemento
             );
+            let ditancia = 0
+            if(endereco_user){
+              ditancia = row.distancia
+            }
             produtos_loja.push(new Produto_Loja(
                 produto,
                 loja,
                 row.id_produto_loja,
                 endereco,
+                ditancia
 
             ));
             
         }
         
     }
+    
+
     return produtos_loja;
   }
  

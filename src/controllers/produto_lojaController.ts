@@ -91,9 +91,10 @@ export class Produto_LojaController {
       }
       
       
-      const produto_loja = await Produto_LojaService.listar(endereco,value.nomes,value.categoria);
+      const produtos_loja = await Produto_LojaService.listar(endereco,value.nomes,value.categoria);
+
       
-      return res.status(200).json({ message: 'Produtos encontrados', produto_loja });
+      return res.status(200).json({ message: 'Produtos encontrados', produtos_loja, });
 
     } catch (error) {
       return res.status(500).json({ message: (error as Error).message });
