@@ -12,6 +12,13 @@ router.post('/buscar', async (req, res) => {
       res.status(500).json({ message: 'Erro ao encontrar Produto', error });
     }
   });
+  router.get('/categorias', async (req, res) => {
+    try {
+      await produtoController.listar_categorias(res);
+    } catch (error) {
+      res.status(500).json({ message: 'Erro ao encontrar Categorias', error });
+    }
+  });
   router.post('/listar', async (req, res) => {
     try {
       await produtoController.buscarProdutos(req, res);

@@ -32,6 +32,17 @@ export class ProdutoController {
       return res.status(500).json({ message: (error as Error).message });
     }
   }
+  async listar_categorias(res) {
+    try {
+      
+      const categorias = await ProdutoService.listar_categorias();
+
+      return res.status(200).json({ message: 'Categorias encontradas', categorias });
+
+    } catch (error) {
+      return res.status(500).json({ message: (error as Error).message });
+    }
+  }
   async criar(req, res) {
     try {
       const schema = Joi.object({

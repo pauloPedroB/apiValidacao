@@ -83,9 +83,9 @@ export class Produto_LojaController {
       const endereco = await EnderecoService.buscarEndereco({id_usuario: usuario.id_usuario});
       if(endereco == null){
         if(usuario.typeUser == 1){
-          const produto_loja = await Produto_LojaService.listar(null,value.nomes,value.categoria);
+          const produtos_loja = await Produto_LojaService.listar(null,value.nomes,value.categoria);
   
-          return res.status(200).json({ message: 'Produto encontrado', produto_loja });
+          return res.status(200).json({ message: 'Produto encontrado', produtos_loja });
         }
         return res.status(404).json({ message: 'Endereço não encontrado' });
       }

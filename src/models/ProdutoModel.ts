@@ -25,6 +25,23 @@ export class ProdutoModel {
   
     return null;
   }
+  static async listar_categorias(): Promise<string[]> {
+    let query = 'select distinct(categoria) from produtos;';
+  
+    const [rows] = await pool.execute(query);
+
+    let categorias: string[] = []
+  
+    if (Array.isArray(rows)) {
+      for (const row of rows){
+        const produto = row as RowDataPacket;
+        categorias.push(produto.categoria)
+      }
+      
+    }
+  
+    return categorias;
+  }
  
   static async criar(produto: Produto): Promise<void> {
     await pool.execute(

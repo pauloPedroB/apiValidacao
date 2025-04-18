@@ -7,12 +7,6 @@ import { Endereco } from './Endereco';
 
 import { Usuario } from './Usuario';
 import { Produto } from './Produto';
-import { cnpj } from 'cpf-cnpj-validator';
-
-
-
-
-
 
 export class Produto_LojaModel {
   // Buscar um usuário por email
@@ -111,7 +105,7 @@ export class Produto_LojaModel {
       '), 2) AS distancia';
     }
     else{
-      query += 'SELECT pl.*, l.*, p.*, u.* ';
+      query += 'SELECT pl.*, l.*, p.*,e.*, u.* ';
     }
   
     if (palavras && palavras.length > 0) {
@@ -132,7 +126,9 @@ export class Produto_LojaModel {
     else{
       query += 'FROM produto_loja pl ' +
               'JOIN lojas l ON pl.id_loja = l.id_loja ' +
-              'JOIN produtos p ON pl.id_produto = p.id_produto '
+              'JOIN produtos p ON pl.id_produto = p.id_produto ' +
+              'JOIN enderecos e ON e.id_usuario = l.id_usuario '+
+              'JOIN usuarios u ON u.id_usuario = l.id_usuario '
     }
   
     const conditions: string[] = [];
@@ -176,7 +172,6 @@ export class Produto_LojaModel {
     if (Array.isArray(rows)) {
        
         for (const row of rows as RowDataPacket[]) {
-          console.log(row.distancia)
             const usuario = new Usuario(row.id_usuario, row.email_usuario, row.pass_usuario, row.typeUser, row.verificado);
             const loja = new Loja(
               row.cnpj,
@@ -207,16 +202,17 @@ export class Produto_LojaModel {
               row.id,
               row.complemento
             );
-            let ditancia = 0
+            let distancia = 0
             if(endereco_user){
-              ditancia = row.distancia
+              distancia = row.distancia
             }
+
             produtos_loja.push(new Produto_Loja(
                 produto,
                 loja,
                 row.id_produto_loja,
                 endereco,
-                ditancia
+                distancia
 
             ));
             
@@ -224,7 +220,6 @@ export class Produto_LojaModel {
         
     }
     
-
     return produtos_loja;
   }
  

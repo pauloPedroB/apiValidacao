@@ -14,6 +14,11 @@ export class ProdutoService {
       }
       return produto
     }
+    static async listar_categorias(): Promise<string[]> {
+        const produto = await ProdutoModel.listar_categorias();
+        
+        return produto
+    }
     static async criar(produto: { nome_produto: String, categoria: String, img: String}): Promise<void> {
   
         const novo_produto = new Produto(
