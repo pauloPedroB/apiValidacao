@@ -2,19 +2,20 @@
 import pool from '../config/db';
 import { Endereco } from './Endereco';
 import { RowDataPacket } from 'mysql2'; // Importando RowDataPacket
-import { UsuarioService } from '../services/usuarioService';
+import { Usuario } from './Usuario';
+
 
 export class EnderecoModel {
   // Buscar um usuário por email
   static async buscarEndereco(filtro: { id_usuario?: number; cep?: string; id_endereco?: number; }): Promise<Endereco | null> {
-    let query = 'SELECT * FROM enderecos WHERE ';
+    let query = 'SELECT * FROM enderecos join usuarios ON usuarios.id_usuario = enderecos.id_usuario WHERE ';
     const params: any[] = [];
   
     if (filtro.id_usuario !== undefined) {
-      query += 'id_usuario = ?';
+      query += 'enderecos.id_usuario = ?';
       params.push(filtro.id_usuario);
     } else if (filtro.id_endereco !== undefined) {
-      query += 'id = ?';
+      query += 'enderecos.id = ?';
       params.push(filtro.id_endereco);
     }else {
       // Nenhum filtro válido foi passado
@@ -25,11 +26,7 @@ export class EnderecoModel {
   
     if (Array.isArray(rows) && rows.length > 0) {
       const endereco = rows[0] as RowDataPacket;
-      const usuario = await UsuarioService.buscar({id_usuario: endereco.id_usuario});
-  
-      if (!usuario) {
-        return null;
-      }
+      const usuario = new Usuario(endereco.id_usuario, endereco.email_usuario, endereco.pass_usuario, endereco.typeUser, endereco.verificado);
    
       return new Endereco(
         endereco.rua,

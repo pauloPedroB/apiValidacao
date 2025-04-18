@@ -46,7 +46,7 @@ export class Produto_LojaController {
 
       const endereco = await EnderecoService.buscarEndereco({id_usuario: usuario.id_usuario});
       if(endereco == null){
-        return res.status(404).json({ message: 'Endereço não encontrado' });
+        return res.status(404).json({ message: 'Seu Endereço não foi encontrado' });
       }
      
       const distancia = await EnderecoService.contarDistancia(endereco,produto_loja.endereco);

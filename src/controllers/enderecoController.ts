@@ -189,16 +189,12 @@ export class EnderecoController {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
       
-      const usuario = await UsuarioService.buscar({id_usuario: value.id_usuario});
-
-      if (!usuario) {
-        return res.status(404).json({ message: 'Usuário não encontrado!' });
-      }
+      
       const endereco = await EnderecoService.buscarEndereco({id_endereco: value.id_endereco});
       if(endereco == null){
         return res.status(400).json({ message: 'Endereço não encontrado' });
       }
-      if(endereco.usuario.id_usuario != usuario.id_usuario){
+      if(endereco.usuario.id_usuario != value.id_usuario){
         return res.status(400).json({ message: 'Esse usuário não pode editar o endereço de outro usuário' });
       }
 
@@ -232,7 +228,7 @@ export class EnderecoController {
         nmr: value.nmr,
         latitude: enderecoValidado.latitude,
         longitude: enderecoValidado.longitude,
-        usuario,
+        usuario: endereco.usuario,
         complemento: value.complemento
       });
       

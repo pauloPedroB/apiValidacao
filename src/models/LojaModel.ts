@@ -2,16 +2,17 @@
 import pool from '../config/db';
 import { Loja } from './Loja';
 import { RowDataPacket } from 'mysql2'; // Importando RowDataPacket
-import { UsuarioService } from '../services/usuarioService';
+import { Usuario } from './Usuario';
+
 
 export class LojaModel {
   // Buscar um usuário por email
   static async buscarLoja(filtro: { id_usuario?: number; cnpj?: string; id_loja?: number; }): Promise<Loja | null> {
-    let query = 'SELECT * FROM lojas WHERE ';
+    let query = 'SELECT * FROM lojas usuarios ON usuarios.id_usuario = lojas.id_usuario WHERE ';
     const params: any[] = [];
   
     if (filtro.id_usuario !== undefined) {
-      query += 'id_usuario = ?';
+      query += 'lojas.id_usuario = ?';
       params.push(filtro.id_usuario);
     } else if (filtro.cnpj !== undefined) {
       query += 'cnpj = ?';
@@ -28,11 +29,7 @@ export class LojaModel {
   
     if (Array.isArray(rows) && rows.length > 0) {
       const loja = rows[0] as RowDataPacket;
-      const usuario = await UsuarioService.buscar({id_usuario: loja.id_usuario});
-  
-      if (!usuario) {
-        return null;
-      }
+      const usuario = new Usuario(loja.id_usuario, loja.email_usuario, loja.pass_usuario, loja.typeUser, loja.verificado);
    
       return new Loja(
         loja.cnpj,
