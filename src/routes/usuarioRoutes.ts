@@ -1,6 +1,7 @@
 // src/routes/usuarioRoutes.ts
 import { Router } from 'express';
 import { UsuarioController } from '../controllers/usuarioController';
+import { authMiddleware } from '../middleware/authmiddleware';
 
 
 const router = Router();
@@ -23,7 +24,7 @@ router.post('/login', async (req, res) => {
     }
   });
 
-router.post('/buscar', async (req, res) => {
+router.post('/buscar', authMiddleware, async (req, res) => {
   try {
     await usuarioController.buscar(req, res);
   } catch (error) {
