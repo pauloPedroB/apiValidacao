@@ -1,6 +1,8 @@
 // src/controllers/usuarioController.ts
 import { Request, Response } from 'express';
 import { UsuarioService } from '../services/usuarioService';
+import { Usuario } from '../models/Usuario';
+
 import Joi from "joi";
 import { TokenService } from '../services/tokenService';
 const jwt = require('jsonwebtoken');
@@ -42,10 +44,10 @@ export class UsuarioController {
       }
 
       // Verifica se o email já está cadastrado
-      const usuario = await UsuarioService.buscar({email_usuario: email_usuario});
+      const verify_usuario = await UsuarioService.buscar({email_usuario: email_usuario});
 
 
-      if (usuario) {
+      if (verify_usuario) {
         return res.status(404).json({ message: 'Email já cadastrado!' });
       }
 
@@ -57,9 +59,14 @@ export class UsuarioController {
         typeUser
       });
 
-      const novo_usuario = await UsuarioService.buscar({email_usuario: email_usuario});
+      const usuario = await UsuarioService.buscar({email_usuario: email_usuario});
+      const token = jwt.sign(
+        { usuario }, // payload
+        SECRET_KEY,
+        { expiresIn: '1h' } // expiração
+      );
 
-      res.status(201).json({ message: 'Usuário criado com sucesso', novo_usuario });
+      res.status(201).json({ message: 'Usuário criado com sucesso', token });
     } catch (error) {
       res.status(500).json({ message: (error as Error).message });
     }
@@ -92,9 +99,9 @@ export class UsuarioController {
       const usuario = await UsuarioService.login(email_usuario, pass_usuario);
       
       const token = jwt.sign(
-        { usuario }, // payload
+        { usuario },
         SECRET_KEY,
-        { expiresIn: '1h' } // expiração
+        { expiresIn: '1h' }
       );
   
 
@@ -108,32 +115,58 @@ export class UsuarioController {
 
   async buscar(req, res) {
     try {
-    
+  
+      const schema = Joi.custom((value, helpers) => {
+        if (!(value instanceof Usuario)) {
+          return helpers.error('any.invalid');
+        }
+        return value; // está ok
+      }, 'Classe Usuario');
+      const usuario_req = req.usuario
+      const { error } = schema.validate(usuario_req);
+
+      if (error) {
+        return res.status(400).json({ message: error.details.map((err) => err.message) });
+
+      } 
+
+      res.status(200).json({ message: 'Usuário encontrado', usuario_req });
+
+    } catch (error) {
+      res.status(500).json({ message: (error as Error).message });
+    }
+  }
+  async buscarporEmail(req, res) {
+    try {
       const schema = Joi.object({
         email_usuario: Joi.string().email().max(120).messages({
           "string.email": "O email deve ser válido!",
           "string.max": "O email deve ter no máximo 120 caracteres!",
         }),
         id_user: Joi.number().integer().messages({
-          "number.base": "Entre no sistema para conseguirmos validar seu usuário!",
-          "number.integer": "O id do usuário deve ser um número inteiro!"
-          }),
-      }).or('id_user','email_usuario' ).messages({
-        'object.missing': 'É necessário informar o id_usuario ou o email'
+          "number.base": "Id do Usuário deve ser um número",
+          "number.integer": "O id do Usuário deve ser um número inteiro!",
+          "any.required": "O id do Usuário é obrigatório!"
+        })
+      }).or('id_user', 'email_usuario').messages({
+        'object.missing': 'É necessário informar o id_usuario ou o email_usuario'
       });
-
       const { error, value } = schema.validate(req.body, { abortEarly: false });
 
       if (error) {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
-
-      const usuario = await UsuarioService.buscar({id_usuario: value.id_user,email_usuario: value.email_usuario});
+      const usuario = await UsuarioService.buscar({email_usuario: value.email_usuario,id_usuario: value.id_user});
       if (!usuario) {
         return res.status(400).json({ message: 'Usuário não encontrado' });
       }
+      const token = jwt.sign(
+        { usuario }, // payload
+        SECRET_KEY,
+        { expiresIn: '1h' } // expiração
+      );
 
-      res.status(200).json({ message: 'Usuário encontrado', usuario });
+      res.status(200).json({ message: 'Usuário encontrado', token });
 
     } catch (error) {
       res.status(500).json({ message: (error as Error).message });
@@ -193,43 +226,5 @@ export class UsuarioController {
       res.status(500).json({ message: (error as Error).message });
     }
   }
-  async atualizarTipo(req, res) {
-    try {
-      const { typeUser, id_user } = req.body;
-
-      const schema = Joi.object({
-          id_user: Joi.number().integer().required().messages({
-            "any.required": "Entre no sistema para conseguirmos validar seu usuário!",
-            "number.base": "Entre no sistema para conseguirmos validar seu usuário!",
-            "number.integer": "O id do usuário deve ser um número inteiro!"
-        }),
-          typeUser: Joi.number().integer().required().messages({
-            "any.required": "Entre no sistema para conseguirmos validar seu usuário!",
-            "number.base": "Entre no sistema para conseguirmos validar seu usuário!",
-            "number.integer": "O id do usuário deve ser um número inteiro!"
-        }),
-      });
-
-      const { error, value } = schema.validate(req.body, { abortEarly: false });
-
-      if (error) {
-        return res.status(400).json({ message: error.details.map((err) => err.message) });
-      }
-      
-      const usuario = await UsuarioService.buscar({id_usuario: id_user});
-
-      if (!usuario || !usuario.id_usuario) {
-        return res.status(404).json({ message: 'Usuário não encontrado!' });
-      }
-      usuario.typeUser = typeUser;
-      await UsuarioService.atualizarTipo(usuario);
-
-
-      res.status(201).json({ message: 'Tipo de usuário alterado com Sucesso' });
-    } catch (error) {
-      res.status(500).json({ message: (error as Error).message });
-    }
-  }
-
-
+  
 }

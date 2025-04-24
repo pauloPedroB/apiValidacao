@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 export class UsuarioService {
   // Buscar um usuário por email
   static async buscar(filtro: { id_usuario?: number; email_usuario?: string }): Promise<Usuario | null> {
+
       let usuario: Usuario | null =  null;
       if (filtro.id_usuario !== undefined) {
           usuario = await UsuarioModel.buscar({id_usuario: filtro.id_usuario});

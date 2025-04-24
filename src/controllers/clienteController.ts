@@ -2,6 +2,10 @@
 import { ClienteService } from '../services/clienteService';
 import { UsuarioService } from '../services/usuarioService';
 import { cpf as cpfValidator } from 'cpf-cnpj-validator';
+import { Usuario } from '../models/Usuario';
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = process.env.SECRET_KEY;
+
 
 
 import Joi from "joi";
@@ -9,38 +13,30 @@ import Joi from "joi";
 export class ClienteController {
   async buscar(req, res) {
     try {
-      const schema = Joi.object({
-        id_usuario: Joi.number().integer().messages({
-          "number.base": "Id do Usuário deve ser um número",
-          "number.integer": "O id do Usuário deve ser um número inteiro!"
-        }),
-        id_cliente: Joi.number().integer().messages({
-          "number.base": "Id do Cliente deve ser um número",
-          "number.integer": "O id do Cliente deve ser um número inteiro!"
-        }),
-        cpf: Joi.string().pattern(/^\d{11}$/).messages({
-          "string.pattern.base": "CPF deve conter 11 dígitos numéricos"
-        })
-      }).or('id_usuario', 'cpf','id_cliente').messages({
-        'object.missing': 'É necessário informar o id_usuario ou o cpf'
-      });
+      const schema = Joi.custom((value, helpers) => {
+        if (!(value instanceof Usuario)) {
+          return helpers.error('any.invalid');
+        }
+        return value; // está ok
+      }, 'Classe Usuario');
+      const usuario_req = req.usuario
 
-      const { error, value } = schema.validate(req.body, { abortEarly: false });
-
+      const { error } = schema.validate(usuario_req);
       if (error) {
-        return res.status(400).json({ message: error.details.map((err) => err.message) });
+        return res.status(400).json({ message: ['Usuário do token inválido'] });
       }
-      const cliente = await ClienteService.buscarCliente({
-        id: value.id_usuario,
-        cpf: value.cpf,
-        id_cliente: value.id_cliente
-      });
+
+      const cliente = await ClienteService.buscarCliente({usuario: usuario_req,});
 
       if (!cliente) {
         return res.status(404).json({ message: 'Cliente não encontrado' });
       }
-
-      return res.status(200).json({ message: 'Cliente encontrado', cliente });
+      const token_dados = jwt.sign(
+        { cliente },
+        SECRET_KEY,
+        { expiresIn: '1h' }
+      );
+      return res.status(200).json({ message: 'Cliente encontrado', token_dados });
 
     } catch (error) {
       return res.status(500).json({ message: (error as Error).message });
@@ -48,7 +44,7 @@ export class ClienteController {
   }
   async criar(req, res) {
     try {
-      const { cpf, nome, dtNascimento, telefone,genero,carro,id_usuario} = req.body;
+      const { cpf, nome, dtNascimento, telefone,genero,carro} = req.body;
 
       const dataMinima = new Date();
       dataMinima.setFullYear(dataMinima.getFullYear() - 18);
@@ -80,45 +76,56 @@ export class ClienteController {
           "number.integer": "O campo carro deve ser um número inteiro!",
           "any.required": "O campo carro é obrigatório!"
         }),
-        id_usuario: Joi.number().integer().messages({
-          "number.base": "Id do Usuário deve ser um número",
-          "number.integer": "O id do Usuário deve ser um número inteiro!",
-          "any.required": "O id do Usuário é obrigatório!"
-        }),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
 
       if (error) {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
+
+      const schemaUser = Joi.custom((value, helpers) => {
+        if (!(value instanceof Usuario)) {
+          return helpers.error('any.invalid');
+        }
+        return value; // está ok
+      }, 'Classe Usuario');
+      const usuario_req = req.usuario
+
+      const { error: errorUser } = schemaUser.validate(usuario_req);
+      if (errorUser) {
+        return res.status(400).json({ message: ['Usuário do token inválido'] });
+      }
+
       if (!cpfValidator.isValid(cpf)) {
         return res.status(400).json({ message: 'CPF INVÁLIDO' });
       }
-      const cliente = await ClienteService.buscarCliente({cpf: cpf,});
+      const verify_cliente = await ClienteService.buscarCliente({cpf: cpf,});
 
-      if (cliente) {
+      if (verify_cliente) {
         return res.status(404).json({ message: 'Já existe um cliente cadastrado com esse CPF' });
       }
 
-      const usuario = await UsuarioService.buscar({id_usuario: id_usuario});
-
-      if (!usuario) {
-        return res.status(404).json({ message: 'Usuário não encontrado!' });
-      }
-      if(usuario.typeUser != null){
+      if(usuario_req.typeUser != null){
         return res.status(404).json({ message: 'Este usuário já está vinculado a uma Loja, Cliente ou Administrador' });
       }
-      usuario.typeUser = 3;
+      usuario_req.typeUser = 3;
       
-      await UsuarioService.atualizarTipo(usuario);
+      await UsuarioService.atualizarTipo(usuario_req);
 
       const result = await ClienteService.criar({
-        cpf, nome, dtNascimento, telefone,genero,carro,usuario
+        cpf, nome, dtNascimento, telefone,genero,carro,usuario: usuario_req
       });
-      
-      const novo_cliente = await ClienteService.buscarCliente({cpf: cpf,});
 
-      res.status(201).json({ message: 'Cliente criado com sucesso',novo_cliente });
+      
+      
+      const cliente = await ClienteService.buscarCliente({cpf: cpf,});
+      const token_dados = jwt.sign(
+        { cliente },
+        SECRET_KEY,
+        { expiresIn: '1h' }
+      );
+
+      res.status(201).json({ message: 'Cliente criado com sucesso',token_dados });
     } catch (error) {
       res.status(500).json({ message: (error as Error).message });
     }

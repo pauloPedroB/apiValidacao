@@ -7,10 +7,10 @@ import { ClienteModel } from '../models/ClienteModel';
 
 
 export class ClienteService {
-    static async buscarCliente(filtro: { id?: number; cpf?: string; id_cliente?: number; }): Promise<Cliente | null> {
+    static async buscarCliente(filtro: { usuario?: Usuario; cpf?: string; id_cliente?: number; }): Promise<Cliente | null> {
       let cliente: Cliente | null =  null;
-      if (filtro.id !== undefined) {
-          cliente = await ClienteModel.buscarCliente({id_usuario: filtro.id});
+      if (filtro.usuario !== undefined) {
+          cliente = await ClienteModel.buscarCliente({id_usuario: filtro.usuario.id_usuario});
       }
       else if (filtro.cpf !== undefined) {
           cliente = await ClienteModel.buscarCliente({ cpf: filtro.cpf });

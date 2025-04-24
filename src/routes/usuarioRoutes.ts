@@ -31,6 +31,13 @@ router.post('/buscar', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Erro ao encontrar usuário', error });
   }
 });
+router.post('/buscarPorEmail', async (req, res) => {
+  try {
+    await usuarioController.buscarporEmail(req, res);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao encontrar usuário', error });
+  }
+});
 
 router.post('/resetPass', async (req, res) => {
   try {
@@ -40,13 +47,7 @@ router.post('/resetPass', async (req, res) => {
   }
 });
 
-router.post('/Atualizar/Tipo', async (req, res) => {
-  try {
-    await usuarioController.atualizarTipo(req, res);
-  } catch (error) {
-    res.status(500).json({ message: 'Erro ao alterar tipo de usuário', error });
-  }
-});
+
 
 
 
