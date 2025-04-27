@@ -93,7 +93,7 @@ export class ClienteController {
 
       const { error: errorUser } = schemaUser.validate(usuario_req);
       if (errorUser) {
-        return res.status(400).json({ message: ['Usuário do token inválido'] });
+        return res.status(400).json({ message: 'Usuário do token inválido' });
       }
 
       if (!cpfValidator.isValid(cpf)) {

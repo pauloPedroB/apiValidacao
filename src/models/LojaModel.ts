@@ -8,7 +8,7 @@ import { Usuario } from './Usuario';
 export class LojaModel {
   // Buscar um usuário por email
   static async buscarLoja(filtro: { id_usuario?: number; cnpj?: string; id_loja?: number; }): Promise<Loja | null> {
-    let query = 'SELECT * FROM lojas usuarios ON usuarios.id_usuario = lojas.id_usuario WHERE ';
+    let query = 'SELECT * FROM lojas JOIN usuarios ON usuarios.id_usuario = lojas.id_usuario WHERE ';
     const params: any[] = [];
   
     if (filtro.id_usuario !== undefined) {

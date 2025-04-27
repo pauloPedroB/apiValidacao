@@ -7,10 +7,10 @@ import { LojaModel } from '../models/LojaModel';
 
 
 export class LojaService {
-    static async buscarLoja(filtro: { id?: number; cnpj?: string; id_loja?: number; }): Promise<Loja | null> {
+    static async buscarLoja(filtro: { usuario?: Usuario; cnpj?: string; id_loja?: number; }): Promise<Loja | null> {
       let loja: Loja | null =  null;
-      if (filtro.id !== undefined) {
-            loja = await LojaModel.buscarLoja({id_usuario: filtro.id});
+      if (filtro.usuario !== undefined) {
+        loja = await LojaModel.buscarLoja({id_usuario: filtro.usuario.id_usuario});
       }
       else if (filtro.cnpj !== undefined) {
             loja = await LojaModel.buscarLoja({ cnpj: filtro.cnpj });
