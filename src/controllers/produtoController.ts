@@ -1,4 +1,5 @@
 // src/controllers/usuarioController.ts
+import { Usuario } from '../models/Usuario';
 import { ProdutoService } from '../services/produtoService';
 
 
@@ -20,6 +21,23 @@ export class ProdutoController {
       if (error) {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
+
+      const schemaUser = Joi.custom((value, helpers) => {
+        if (!(value instanceof Usuario)) {
+          return helpers.error('any.invalid');
+        }
+        return value; // está ok
+      }, 'Classe Usuario');
+      const usuario_req = req.usuario
+
+      const { error: errorUser } = schemaUser.validate(usuario_req);
+      if (errorUser) {
+        return res.status(400).json({ message: ['Usuário do token inválido'] });
+      }
+      if(usuario_req.typeUser != 1 && usuario_req.typeUser != 2){
+        return res.status(404).json({ message: 'Seu usuário não tem acesso para buscar produtos' });
+      }
+
       const produto = await ProdutoService.buscarProduto(value.id_produto);
 
       if (!produto) {
@@ -65,6 +83,22 @@ export class ProdutoController {
         console.log('joi')
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
+
+      const schemaUser = Joi.custom((value, helpers) => {
+        if (!(value instanceof Usuario)) {
+          return helpers.error('any.invalid');
+        }
+        return value; // está ok
+      }, 'Classe Usuario');
+      const usuario_req = req.usuario
+
+      const { error: errorUser } = schemaUser.validate(usuario_req);
+      if (errorUser) {
+        return res.status(400).json({ message: ['Usuário do token inválido'] });
+      }
+      if(usuario_req.typeUser != 1){
+        return res.status(404).json({ message: 'Seu usuário não tem acesso para cadastrar produtos' });
+      }
       
       const result = await ProdutoService.criar({
         nome_produto: value.nome_produto,
@@ -103,6 +137,21 @@ export class ProdutoController {
           console.log('joi')
           return res.status(400).json({ message: error.details.map((err) => err.message) });
         }
+        const schemaUser = Joi.custom((value, helpers) => {
+          if (!(value instanceof Usuario)) {
+            return helpers.error('any.invalid');
+          }
+          return value; // está ok
+        }, 'Classe Usuario');
+        const usuario_req = req.usuario
+  
+        const { error: errorUser } = schemaUser.validate(usuario_req);
+        if (errorUser) {
+          return res.status(400).json({ message: ['Usuário do token inválido'] });
+        }
+        if(usuario_req.typeUser != 1){
+          return res.status(404).json({ message: 'Seu usuário não tem acesso para editar produtos' });
+        }
         const produto = await ProdutoService.buscarProduto(value.id_produto)
         if(produto == null){
             return res.status(404).json({ message: 'Produto não encontrado' });
@@ -133,6 +182,21 @@ export class ProdutoController {
           console.log('joi')
           return res.status(400).json({ message: error.details.map((err) => err.message) });
         }
+        const schemaUser = Joi.custom((value, helpers) => {
+          if (!(value instanceof Usuario)) {
+            return helpers.error('any.invalid');
+          }
+          return value; // está ok
+        }, 'Classe Usuario');
+        const usuario_req = req.usuario
+  
+        const { error: errorUser } = schemaUser.validate(usuario_req);
+        if (errorUser) {
+          return res.status(400).json({ message: ['Usuário do token inválido'] });
+        }
+        if(usuario_req.typeUser != 1){
+          return res.status(404).json({ message: 'Seu usuário não tem acesso para excluir produtos' });
+        }
         const produto = await ProdutoService.buscarProduto(value.id_produto)
         if(produto == null){
             return res.status(404).json({ message: 'Produto não encontrado' });
@@ -157,6 +221,21 @@ export class ProdutoController {
 
       if (error) {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
+      }
+      const schemaUser = Joi.custom((value, helpers) => {
+        if (!(value instanceof Usuario)) {
+          return helpers.error('any.invalid');
+        }
+        return value; // está ok
+      }, 'Classe Usuario');
+      const usuario_req = req.usuario
+
+      const { error: errorUser } = schemaUser.validate(usuario_req);
+      if (errorUser) {
+        return res.status(400).json({ message: ['Usuário do token inválido'] });
+      }
+      if(usuario_req.typeUser != 1 && usuario_req.typeUser != 2){
+        return res.status(404).json({ message: 'Seu usuário não tem acesso para listar produtos' });
       }
       const produtos = await ProdutoService.buscarProdutos(value.nomes,value.categoria);
 

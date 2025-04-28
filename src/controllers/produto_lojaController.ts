@@ -2,7 +2,6 @@
 import { Produto_LojaService } from '../services/produto_lojaService';
 import {EnderecoService} from '../services/enderecoService';
 import {UsuarioService} from '../services/usuarioService';
-import {LojaService} from '../services/lojaService';
 import {ProdutoService} from '../services/produtoService';
 import { Usuario } from '../models/Usuario';
 
