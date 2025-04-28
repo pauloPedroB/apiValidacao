@@ -1,6 +1,8 @@
 // src/index.ts
 import express from 'express';
 import dotenv from 'dotenv';
+
+
 import usuarioRoutes from './routes/usuarioRoutes';
 import tokenRoutes from './routes/tokenRoutes';
 import clienteRoutes from './routes/clienteRoutes';
@@ -10,14 +12,14 @@ import produtoRoutes from './routes/produtoRoutes';
 import produto_lojaRoutes from './routes/produto_lojaRoutes';
 
 
-
+const cors = require('cors');
 
 
 dotenv.config();
 
 const app = express();
 
-
+app.use(cors());
 app.use(express.json());
 app.use('/usuarios', usuarioRoutes);
 app.use('/tokens', tokenRoutes);

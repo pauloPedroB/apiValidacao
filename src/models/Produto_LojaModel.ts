@@ -97,7 +97,7 @@ export class Produto_LojaModel {
     const params: any[] = [];
     let query = ""
     if(endereco_user){
-      query += 'SELECT pl.*, l.*, p.*, e.*, u.*,' +
+      query += 'SELECT pl.*, l.*, p.*, e.*, u.id_usuario,' +
       'ROUND(6371 * ACOS(' +
         'COS(RADIANS('+endereco_user.latitude+')) * COS(RADIANS(e.latitude)) * ' +
         'COS(RADIANS(e.longitude) - RADIANS('+endereco_user.longitude+')) + ' +
@@ -105,7 +105,7 @@ export class Produto_LojaModel {
       '), 2) AS distancia';
     }
     else{
-      query += 'SELECT pl.*, l.*, p.*,e.*, u.* ';
+      query += 'SELECT pl.*, l.id_loja, p.*, u.id_usuario ';
     }
   
     if (palavras && palavras.length > 0) {
@@ -127,7 +127,6 @@ export class Produto_LojaModel {
       query += 'FROM produto_loja pl ' +
               'JOIN lojas l ON pl.id_loja = l.id_loja ' +
               'JOIN produtos p ON pl.id_produto = p.id_produto ' +
-              'JOIN enderecos e ON e.id_usuario = l.id_usuario '+
               'JOIN usuarios u ON u.id_usuario = l.id_usuario '
     }
   
@@ -189,19 +188,26 @@ export class Produto_LojaModel {
                 row.img,
                 row.id_produto,
             );
-            const endereco = new Endereco(
-              row.rua,
-              row.bairro,
-              row.cidade,
-              row.cep,
-              row.uf,
-              row.nmr,
-              row.latitude,
-              row.longitude,
-              usuario,
-              row.id,
-              row.complemento
-            );
+            let endereco: Endereco | undefined;
+            if(endereco_user){
+              endereco = new Endereco(
+                row.rua,
+                row.bairro,
+                row.cidade,
+                row.cep,
+                row.uf,
+                row.nmr,
+                row.latitude,
+                row.longitude,
+                usuario,
+                row.id,
+                row.complemento
+              );
+            }
+            else{
+              endereco = undefined;
+            }
+            
             let distancia = 0
             if(endereco_user){
               distancia = row.distancia
