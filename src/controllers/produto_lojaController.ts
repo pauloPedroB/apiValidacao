@@ -85,7 +85,6 @@ export class Produto_LojaController {
       if (error) {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
-
       if (!token) {
         const produtos_loja = await Produto_LojaService.listar(null,value.nomes,value.categoria);
         return res.status(200).json({ message: 'Produto encontrado', produtos_loja });
@@ -109,6 +108,8 @@ export class Produto_LojaController {
           return res.status(404).json({ message: 'Endereço não encontrado' });
         }
         const produtos_loja = await Produto_LojaService.listar(endereco,value.nomes,value.categoria);
+        console.log(produtos_loja)
+
         return res.status(200).json({ message: 'Produtos encontrados', produtos_loja, });
 
       } 

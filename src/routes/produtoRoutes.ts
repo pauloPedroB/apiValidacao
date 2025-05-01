@@ -7,7 +7,7 @@ import { authMiddleware } from '../middleware/authmiddleware';
 const router = Router();
 const produtoController = new ProdutoController();
 
-router.post('/buscar',authMiddleware, async (req, res) => {
+router.post('/buscar', async (req, res) => {
     try {
       await produtoController.buscar(req, res);
     } catch (error) {

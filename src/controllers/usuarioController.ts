@@ -74,7 +74,6 @@ export class UsuarioController {
 
   async login(req, res) {
     const { email_usuario, pass_usuario } = req.body;
-
     const schema = Joi.object({
       email_usuario: Joi.string().email().max(120).required().messages({
         "string.email": "O email deve ser válido!",

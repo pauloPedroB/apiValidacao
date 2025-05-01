@@ -55,4 +55,12 @@ export class ClienteModel {
       [cliente.cpf, cliente.nome, cliente.telefone, cliente.dtNascimento, cliente.genero, cliente.carro, cliente.usuario.id_usuario]
     );
   }
+  static async editar(cliente: Cliente): Promise<void> {
+
+    await pool.execute(
+      'update clientes set nome = ?, telefone = ?,dtNascimento =? ,genero = ?,carro =? ,id_usuario = ?',
+      [cliente.nome, cliente.telefone, cliente.dtNascimento, cliente.genero, cliente.carro, cliente.usuario.id_usuario]
+
+    );
+  }
 }

@@ -53,4 +53,12 @@ export class LojaModel {
       [loja.cnpj, loja.nomeFantasia, loja.razaoSocial, loja.telefone, loja.celular, loja.abertura, loja.usuario.id_usuario]
     );
   }
+  
+  static async editar(loja: Loja): Promise<void> {
+    await pool.execute(
+      'update lojas set nomeFantasia = ?, razaoSocial = ?,telefone =? ,celular = ?,abertura =? ,id_usuario = ?',
+      [loja.nomeFantasia, loja.razaoSocial, loja.telefone, loja.celular, loja.abertura, loja.usuario.id_usuario]
+    );
+  }
+  
 }
