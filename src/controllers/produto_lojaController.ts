@@ -108,7 +108,6 @@ export class Produto_LojaController {
           return res.status(404).json({ message: 'Endereço não encontrado' });
         }
         const produtos_loja = await Produto_LojaService.listar(endereco,value.nomes,value.categoria);
-        console.log(produtos_loja)
 
         return res.status(200).json({ message: 'Produtos encontrados', produtos_loja, });
 

@@ -93,7 +93,6 @@ export class EnderecoService {
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         const distancia = R * c;
-        console.log(distancia)
         return distancia; // Retorna a distância em quilômetros
     }
 

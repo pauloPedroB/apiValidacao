@@ -12,7 +12,7 @@ export const dadosMiddleware = async (req: Request, res: Response, next: NextFun
 
   if (!token_dados) {
     console.log('teste')
-    return res.status(401).json({ message: 'Token não fornecido' });
+    return res.status(401).json({ message: 'Token Dados não fornecido' });
   }
 
   try {
@@ -44,7 +44,7 @@ export const dadosMiddleware = async (req: Request, res: Response, next: NextFun
 
   } catch (error) {
     console.log(error);
-    return res.status(401).json({ message: 'Token inválido ou expirado' });
+    return res.status(401).json({ message: 'Token Dados inválido ou expirado' });
   }
 };
 

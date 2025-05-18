@@ -156,11 +156,20 @@ export class Produto_LojaModel {
       query += ' WHERE ' + conditions.join(' AND ');
     }
   
-    if(endereco_user){
-      query += ' ORDER BY distancia ASC, relevancia DESC';
-    }
-    else{
-      query += ' ORDER BY relevancia DESC';
+    if (endereco_user) {
+      if (palavras && palavras.length > 0) {
+        query += ' ORDER BY distancia ASC';
+        query += ', relevancia DESC';
+      }
+      else{
+        query += ' ORDER BY RAND()';
+      }
+    } else {
+      if (palavras && palavras.length > 0) {
+        query += ' ORDER BY relevancia DESC';
+      } else {
+        query += ' ORDER BY RAND()';
+      }
     }
     query += ' LIMIT 40';
   

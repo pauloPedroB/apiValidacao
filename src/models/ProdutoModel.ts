@@ -94,6 +94,8 @@ export class ProdutoModel {
       query += ' ORDER BY relevancia DESC';
     } else {
       query += '0 AS relevancia FROM produtos';
+      query += ' ORDER BY RAND()';
+
       if (categoria) {
         query += ' WHERE categoria = ?';
         params.push(categoria);
