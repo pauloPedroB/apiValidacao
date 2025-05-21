@@ -36,8 +36,8 @@ export class UsuarioModel {
   static async salvar(usuario: Usuario): Promise<void> {
 
     await pool.execute(
-      'INSERT INTO usuarios (email_usuario, pass_usuario, typeUser) VALUES (?, ?, ?)',
-      [usuario.email_usuario, usuario.pass_usuario, usuario.typeUser]
+      'INSERT INTO usuarios (email_usuario, pass_usuario, typeUser, verificado) VALUES (?, ?, ?, ?)',
+      [usuario.email_usuario, usuario.pass_usuario, usuario.typeUser, '20250101']
     );
   }
   static async verificar(usuario: Usuario,dataAtual: Date): Promise<void> {
