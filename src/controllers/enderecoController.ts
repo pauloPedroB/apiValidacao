@@ -141,16 +141,16 @@ export class EnderecoController {
       });
       
       
-      const novo_endereco = await EnderecoService.buscarEndereco({id_usuario: value.id_usuario});
+      const novo_endereco = await EnderecoService.buscarEndereco({id_usuario: usuario_req.id_usuario});
 
       const token_endereco = jwt.sign(
         { endereco:novo_endereco },
         SECRET_KEY,
         { expiresIn: '1h' }
       );
-
       res.status(201).json({ message: 'Endereço criado com sucesso',token_endereco });
     } catch (error) {
+      console.log(error)
       res.status(500).json({ message: (error as Error).message });
     }
   }
