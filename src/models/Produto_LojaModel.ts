@@ -158,8 +158,8 @@ export class Produto_LojaModel {
   
     if (endereco_user) {
       if (palavras && palavras.length > 0) {
-        query += ' ORDER BY distancia ASC';
-        query += ', relevancia DESC';
+        query += ' ORDER BY relevancia ASC';
+        query += ', distancia DESC';
       }
       else{
         query += ' ORDER BY RAND()';
