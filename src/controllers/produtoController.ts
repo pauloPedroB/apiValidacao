@@ -15,7 +15,6 @@ export class ProdutoController {
           "any.required": "O id do Produto é obrigatório!"
         }),
       });
-
       const { error, value } = schema.validate(req.body, { abortEarly: false });
 
       if (error) {

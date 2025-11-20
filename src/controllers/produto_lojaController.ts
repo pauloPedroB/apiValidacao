@@ -24,6 +24,8 @@ export class Produto_LojaController {
           "any.required": "O id do Produto é obrigatório!"
         }),
       });
+      console.log("REQ BODY:", req.body);
+
 
       const { error, value } = schema.validate(req.body, { abortEarly: false });
       if (error) {
@@ -79,22 +81,22 @@ export class Produto_LojaController {
       });
       const token = req.headers['authorization']?.split(' ')[1]; // Ex: "Bearer <token>"
   
-     
       const { error, value } = schema.validate(req.body, { abortEarly: false });
-
       if (error) {
         return res.status(400).json({ message: error.details.map((err) => err.message) });
       }
       if (!token) {
+        console.log("teste")
         const produtos_loja = await Produto_LojaService.listar(null,value.nomes,value.categoria);
         return res.status(200).json({ message: 'Produto encontrado', produtos_loja });
       }
 
       try {
-
         const decoded = jwt.verify(token, SECRET_KEY);
         const usuario_token = decoded;
         const usuario = await UsuarioService.buscar({id_usuario: usuario_token.usuario.id_usuario, email_usuario: usuario_token.usuario.email_usuario});
+        console.log(usuario)
+        
         if(usuario == null){
           return res.status(404).json({ message: 'Usuário não encontrado' });
         }
